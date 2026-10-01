@@ -54,5 +54,4 @@ public class Pref {
     public void setLongitude(String longitude) {
         this.longitude = longitude;
     }
-
 }

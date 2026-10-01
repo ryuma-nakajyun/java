@@ -6,7 +6,7 @@ import java.util.List;
 
 public class OutPrint {
 
-    public static void main(String[] args) {        
+    public static void main(String[] args) {
         // 動作確認データ
         // 自治体コード,都道府県名,市区名,緯度(北緯)[60進数],経度(東経)[60進数]
         // 1,北海道,札幌市, 43°03′52″, 141°20′49″
@@ -43,7 +43,6 @@ public class OutPrint {
         prefList.add(kyushuRegionRep);
 
         outPrint(prefList);
-
     }
 
     private static void outPrint(List<Pref> prefList) {
@@ -53,6 +52,5 @@ public class OutPrint {
             System.out.println(prefObj.getCityName());
             System.out.println(prefObj.getLatitude());
             System.out.println(prefObj.getLongitude());
-
         }
 }

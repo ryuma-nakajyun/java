@@ -9,7 +9,6 @@ public class OutPrint {
         try (BufferedReader br = new BufferedReader(new FileReader("pref.csv"))) {
 
             String line = null;
-            
             while ((line = br.readLine()) != null) {
                 System.out.println(line);
             }
