@@ -4,6 +4,10 @@
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author R.Nakajyun
+ * @version 1.0
+ */
 public class OutPrint {
 
     public static void main(String[] args) {
@@ -12,12 +16,6 @@ public class OutPrint {
     }
 
     private static List<Pref> inputData() {
-        // 動作確認データ
-        // 自治体コード,都道府県名,市区名,緯度(北緯)[60進数],経度(東経)[60進数]
-        // 1,北海道,札幌市, 43°03′52″, 141°20′49″
-        // 13,東京都,新宿区, 35°41′22″, 139°41′30″
-        // 47,沖縄県,那覇市, 26°12′45″, 127°40′51″
-
         List<Pref> prefList = new ArrayList<>();
         // 1,北海道
         Pref hokkaidoRegionRep = new Pref();
@@ -49,6 +47,18 @@ public class OutPrint {
         return prefList;
     }
 
+    /**
+     * outPrintメソッド
+     * 指定した各都道府県の下記リストの項目を標準出力する。
+     * ・自治体コード
+     * ・都道府県名
+     * ・市区名
+     * ・緯度(北緯)[60進数]
+     * ・経度(東経)[60進数]
+     * 
+     * @param prefList リスト
+     * @return -
+     */
     private static void outPrint(List<Pref> prefList) {
         for (Pref prefObj : prefList) {
             System.out.println(prefObj.getPrefCode());

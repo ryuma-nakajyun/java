@@ -5,7 +5,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 // 参考：https://codingls.com/java/2308/ 【Java】CSVファイルを読み込む方法｜split(“,”)の落とし穴とライブラリの使い分け
 
@@ -23,8 +22,16 @@ public class OutPrint {
      * @return -
      */
     public static void main(String[] args) {
-        // ファイル名を設定
-        String fileName = "pref.csv";
+
+        //  引数チェック
+        if (args.length != 1) {
+            System.out.println("ファイル名を指定してください。");
+            return;
+        }
+        
+        String fileName = args[0];
+        System.out.println("指定されたファイル: " + fileName);
+
         try {
             List<Pref> prefList = inputPrefData(fileName);
             outPrint(prefList);
@@ -41,7 +48,7 @@ public class OutPrint {
      * @return prefList
      */
     private static List<Pref> inputPrefData(String fileName) throws IOException {
-        // // 引数チェック
+        //  引数チェック
         if (fileName == null || fileName.isBlank()) {
             throw new IllegalArgumentException("引数不正：" + fileName);
         }

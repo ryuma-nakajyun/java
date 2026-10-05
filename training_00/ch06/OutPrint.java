@@ -4,8 +4,24 @@
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author R.Nakajyun
+ * @version 1.0
+ */
 public class OutPrint {
 
+    /**
+     * mainメソッド
+     * 指定した各都道府県の下記リストの項目を出力する。
+     * ・自治体コード
+     * ・都道府県名
+     * ・市区名
+     * ・緯度(北緯)[60進数]
+     * ・経度(東経)[60進数]
+     * 
+     * @param args 配列
+     * @return -
+     */
     public static void main(String[] args) {
 
         // 1,北海道

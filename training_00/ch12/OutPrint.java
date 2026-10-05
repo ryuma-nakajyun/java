@@ -5,7 +5,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 // 参考：https://codingls.com/java/2308/ 【Java】CSVファイルを読み込む方法｜split(“,”)の落とし穴とライブラリの使い分け
 
@@ -23,10 +22,18 @@ public class OutPrint {
      * @return -
      */
     public static void main(String[] args) {
-        // ファイル名を設定
-        String fileName = "pref.csv";
+
+        // 引数チェック
+        if (args.length != 1) {
+            System.out.println("ファイル名を指定してください。");
+            return;
+        }
+
+        String fileName = args[0];
+        System.out.println("指定されたファイル: " + fileName);
+
         try {
-            List<Pref> prefList = inputPrefData(fileName);
+            List<Pref> prefList = inputPrefsData(fileName);
             outPrint(prefList);
         } catch (Exception e) {
             e.printStackTrace();
@@ -34,14 +41,14 @@ public class OutPrint {
     }
 
     /**
-     * inputPrefDataメソッド
+     * inputPrefsDataメソッド
      * 指定したファイルから項目を都道府県リストに追加
      * 
      * @param fileName ファイルパス
      * @return prefList
      */
-    private static List<Pref> inputPrefData(String fileName) throws IOException {
-        // // 引数チェック
+    private static List<Pref> inputPrefsData(String fileName) throws IOException {
+        // 引数チェック
         if (fileName == null || fileName.isBlank()) {
             throw new IllegalArgumentException("引数不正：" + fileName);
         }
@@ -57,16 +64,16 @@ public class OutPrint {
             throw new IOException("ファイルの中身が空です：" + file); // 権限とかの原因？
         }
 
-        String line = null;
+        String record = null;
         // ヘッダ判定用変数[true:ヘッダ未判定、false:ヘッダ判定済み]
         boolean isCsvHeader = true;
 
-        // ファイル読み込みの初回判定を実行する
-        // ファイルの先頭行はヘッダ行のためスキップする
         // csvファイルから読み込んだ、値を格納するPrefListを用意(都道府県リスト)
         List<Pref> prefList = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-            while ((line = br.readLine()) != null) {
+            // ファイル読み込みの初回判定を実行する
+            // ファイルの先頭行はヘッダ行のためスキップする
+            while ((record = br.readLine()) != null) {
                 if (isCsvHeader) {
                     isCsvHeader = false;
                     continue;
@@ -76,17 +83,17 @@ public class OutPrint {
                 // PrefListに各フィールドを設定する
                 // -1 で末尾の空欄も保持
                 // カラム数のチェック
-                String[] prefCols = line.split(",", -1);
-                if (prefCols.length != 5) {
-                    throw new IOException("CSVフォーマット不正 : " + line);
+                String[] prefColumns = record.split(",", -1);
+                if (prefColumns.length != 5) {
+                    throw new IOException("CSVフォーマット不正 : " + record);
                 }
 
                 Pref prefObj = new Pref();
-                prefObj.setPrefCode(prefCols[0]); // 都道府県コード
-                prefObj.setPrefName(prefCols[1]); // 都道府県名
-                prefObj.setCityName(prefCols[2]); // 市区名
-                prefObj.setLatitude(prefCols[3]); // 緯度（北緯）[60進数]
-                prefObj.setLongitude(prefCols[4]); // 経度（東経）[60進数]
+                prefObj.setPrefCode(prefColumns[0]); // 都道府県コード
+                prefObj.setPrefName(prefColumns[1]); // 都道府県名
+                prefObj.setCityName(prefColumns[2]); // 市区名
+                prefObj.setLatitude(prefColumns[3]); // 緯度（北緯）[60進数]
+                prefObj.setLongitude(prefColumns[4]); // 経度（東経）[60進数]
 
                 // 都道府県リストに都道府県インスタンスを追加
                 prefList.add(prefObj);
