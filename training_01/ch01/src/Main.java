@@ -1,12 +1,9 @@
-// https://dexall.co.jp/articles/?p=1061 → 参考
-// https://qiita.com/studio_meowtoon/items/4d11e94a2389758759cd → 参考
-
 /**
  * @author R.Nakajyun
  * 
  * @version 1.0
  */
-public class HelloWorld {
+public class Main {
     /**
      * mainメソッド
      * 指定した文字列を標準出力する。
@@ -16,7 +13,7 @@ public class HelloWorld {
      */
     public static void main(String[] args) {
         if (args.length != 2) {
-            throw new IllegalArgumentException("引数異常");
+            throw new IllegalArgumentException("引数が異常のため異常終了");
         }
 
         for (String str : args) {

@@ -11,7 +11,7 @@ fi
 echo "[INFO] Compile successful."
 
 # 実行
-java -cp bin Main ch 01
+java -cp bin Main ch 03
 
 # 直前の実行結果の判定
 if [ $? -ne 0 ]; then
