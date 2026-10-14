@@ -68,7 +68,7 @@ public class Main {
             String fileName) throws IOException {
 
         String methodName = Thread.currentThread().getStackTrace()[METHOD_NUM].getMethodName();
-        Logger.info(TRACE_ID, "AP-0001", CLASS_NAME, methodName, "処理開始");
+        // Logger.info(TRACE_ID, "AP-0001", CLASS_NAME, methodName, "処理開始");
 
         // 引数チェック
         // 引数がnull または 空のチェック
@@ -109,7 +109,7 @@ public class Main {
                 prefList.add(createPref(prefCols));
             }
 
-            Logger.info(TRACE_ID, "AP-0005", CLASS_NAME, methodName, "処理終了");
+            // Logger.info(TRACE_ID, "AP-0005", CLASS_NAME, methodName, "処理終了");
 
             return prefList;
         }
@@ -131,7 +131,7 @@ public class Main {
             List<Pref> prefList) throws IllegalArgumentException {
 
         String methodName = Thread.currentThread().getStackTrace()[METHOD_NUM].getMethodName();
-        Logger.info(TRACE_ID, "AP-0001", CLASS_NAME, methodName, "処理開始");
+        // Logger.info(TRACE_ID, "AP-0001", CLASS_NAME, methodName, "処理開始");
 
         // 引数チェック
         if (prefList.isEmpty()) {
@@ -140,11 +140,20 @@ public class Main {
             // TODO:場合によりけり、データが0件の場合でも処理継続も有かも。 なにが0件なのか？
         }
 
+        int debugCount = 1;
+        Logger.debug(TRACE_ID, "AP-xxxx", CLASS_NAME, methodName, "都道府県情報出力開始");
         for (Pref pref : prefList) {
-            Logger.debug(TRACE_ID, "AP-xxxx", CLASS_NAME, methodName, "都道府県コード:" + pref.getPrefCode());
+            Logger.debug(TRACE_ID, "AP-xxxx", CLASS_NAME, methodName, "カウント:" + debugCount  + "回目");
+            Logger.debug(TRACE_ID, "AP-xxxx", CLASS_NAME, methodName, "都道府県コード:" + String.format("%02d", Integer.parseInt(pref.getPrefCode())));
+            Logger.debug(TRACE_ID, "AP-xxxx", CLASS_NAME, methodName, "都道府県名:" + pref.getPrefName());
+            Logger.debug(TRACE_ID, "AP-xxxx", CLASS_NAME, methodName, "市区名:" + pref.getCityName());
+            Logger.debug(TRACE_ID, "AP-xxxx", CLASS_NAME, methodName, "緯度[10進数]:" +  dmsToDecimal(pref.getLatitude()));
+            Logger.debug(TRACE_ID, "AP-xxxx", CLASS_NAME, methodName, "経度[10進数]:" + dmsToDecimal(pref.getLongitude()));
+            debugCount++;
         }
-
-        Logger.info(TRACE_ID, "AP-0005", CLASS_NAME, methodName, "処理終了");
+        Logger.debug(TRACE_ID, "AP-xxxx", CLASS_NAME, methodName, "都道府県情報出力終了");
+        
+    // Logger.info(TRACE_ID, "AP-0005", CLASS_NAME, methodName, "処理終了");
     }
 
     /**
@@ -159,10 +168,11 @@ public class Main {
      * @param cols 都道府県配列
      * @return pref
      */
-    private static Pref createPref(String[] cols) {
+    private static Pref createPref(
+        String[] cols) {
 
         String methodName = Thread.currentThread().getStackTrace()[METHOD_NUM].getMethodName();
-        Logger.info(TRACE_ID, "AP-0001", CLASS_NAME, methodName, "処理開始");
+        // Logger.info(TRACE_ID, "AP-0001", CLASS_NAME, methodName, "処理開始");
 
         // TODO: インデックスよりも連想配列もいいね。
         // →AI回答→あまりこの場合はあまりよろしくないらしい。
@@ -173,8 +183,41 @@ public class Main {
         pref.setLatitude(cols[CsvConst.LATITUDE]);// 緯度（北緯）[60進数]
         pref.setLongitude(cols[CsvConst.LONGITUDE]);// 経度（東経）[60進数]
 
-        Logger.info(TRACE_ID, "AP-0005", CLASS_NAME, methodName, "処理終了");
+        // Logger.info(TRACE_ID, "AP-0005", CLASS_NAME, methodName, "処理終了");
 
         return pref;
+    }
+
+    /**
+     * dmsToDecimalメソッド
+     * 60進数の座標を10進数に変換する
+     * @param dms 座標
+     * @return degree
+     */
+    private static double dmsToDecimal(
+        String dms) {
+
+        String methodName = Thread.currentThread().getStackTrace()[METHOD_NUM].getMethodName();
+        // Logger.info(TRACE_ID, "AP-0001", CLASS_NAME, methodName, "処理開始");
+
+        String[] parts = dms
+                .replace("°", " ")
+                .replace("′", " ")
+                .replace("″", "")
+                .trim()
+                .split("\\s+");
+
+        // 文字列が含まれているかチェックが必要かね
+        int degree = Integer.parseInt(parts[0]);
+        int minute = Integer.parseInt(parts[1]);
+        int second = Integer.parseInt(parts[2]);
+
+            // Logger.info(TRACE_ID, "AP-0005", CLASS_NAME, methodName, "処理終了");
+
+        double ret = degree
+                + (double) minute / 60
+                + (double) second / 3600;
+
+        return ret;
     }
 }
