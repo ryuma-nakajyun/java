@@ -1,10 +1,10 @@
 #!/bin/bash
 
-CSV_FILE=${1:-"/home/ryuma/dev/java/training_01/ch08/data/pref.csv"}
+PREF_FILE=${1:-"/home/ryuma/dev/java/training_01/ch08/data/pref.csv"}
 
 echo "$(date '+%Y-%m-%d %H:%M:%S.%3N') [INFO] アプリケーション実行開始."
 
-java -cp bin Main "$CSV_FILE"
+java -cp bin Main "$PREF_FILE"
 
 if [ $? -ne 0 ]; then
     echo "$(date '+%Y-%m-%d %H:%M:%S.%3N') [ERROR] アプリケーション実行失敗."

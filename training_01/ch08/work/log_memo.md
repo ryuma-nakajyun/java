@@ -1,13 +1,13 @@
-
-実際には、
-AP-0001 処理開始
-は人間向け、
-event=process_start
-は機械向けです。
-最近のシステムでは両方持つこともあります。
+# ログ
+## ログメッセージの構成について
+| だれ    | ログID      | 意味                        |
+| ------- | --------- | ---------------------------- |
+| 人間向け | 　AP-0001 |  処理開始
+| 機械向け | 　event=process_start | 処理開始　
+最近のシステムでは両方持つこともあります。 →　最近よくあるハイブリッド式??
 
 例えば対応表を作るとこうなります。
-共通処理
+## 共通処理
 | ログID    | 従来ログ      | 構造化ログ                        |
 | ------- | --------- | ---------------------------- |
 | AP-0001 | 処理開始      | event=process\_start         |
@@ -17,7 +17,7 @@ event=process_start
 | AP-0005 | 処理件数出力    | event=count\_output          |
 | AP-0006 | 処理時間出力    | event=elapsed\_time\_output  |
 
-入力チェック
+## 入力チェック
 | ログID    | 従来ログ     | 構造化ログ                        |
 | ------- | -------- | ---------------------------- |
 | AP-1001 | 入力チェック開始 | event=validation\_start      |
@@ -27,7 +27,7 @@ event=process_start
 | AP-1005 | 桁数チェック開始 | event=length\_check\_start   |
 | AP-1006 | 桁数チェック終了 | event=length\_check\_end     |
 
-業務処理
+## 業務処理
 | ログID    | 従来ログ    | 構造化ログ                   |
 | ------- | ------- | ----------------------- |
 | AP-2001 | 業務処理開始  | event=business\_start   |
@@ -37,7 +37,7 @@ event=process_start
 | AP-2005 | データ集計開始 | event=aggregate\_start  |
 | AP-2006 | データ集計終了 | event=aggregate\_end    |
 
-ファイル処理
+## ファイル処理
 | ログID    | 従来ログ     | 構造化ログ                     |
 | ------- | -------- | ------------------------- |
 | AP-3001 | ファイル読込開始 | event=file\_read\_start   |
@@ -47,7 +47,7 @@ event=process_start
 | AP-3005 | ファイル削除開始 | event=file\_delete\_start |
 | AP-3006 | ファイル削除終了 | event=file\_delete\_end   |
 
-DB処理
+## DB処理
 | ログID    | 従来ログ       | 構造化ログ                     |
 | ------- | ---------- | ------------------------- |
 | AP-4001 | DB接続開始     | event=db\_connect\_start  |
@@ -59,7 +59,7 @@ DB処理
 | AP-4007 | ROLLBACK開始 | event=rollback\_start     |
 | AP-4008 | ROLLBACK終了 | event=rollback\_end       |
 
-外部IF
+## 外部IF
 | ログID    | 従来ログ    | 構造化ログ                          |
 | ------- | ------- | ------------------------------ |
 | AP-5001 | API接続開始 | event=api\_connect\_start      |
@@ -69,7 +69,7 @@ DB処理
 | AP-5005 | 電文受信開始  | event=response\_receive\_start |
 | AP-5006 | 電文受信終了  | event=response\_receive\_end   |
 
-業務エラー
+## 業務エラー
 | ログID    | 従来ログ    | 構造化ログ                       |
 | ------- | ------- | --------------------------- |
 | AP-9001 | パラメータ不正 | event=parameter\_error      |
@@ -78,7 +78,7 @@ DB処理
 | AP-9004 | 件数超過    | event=count\_over\_limit    |
 | AP-9005 | 業務ルール違反 | event=business\_rule\_error |
 
-システムエラー
+## システムエラー
 | ログID    | 従来ログ       | 構造化ログ                       |
 | ------- | ---------- | --------------------------- |
 | AP-9901 | DB接続エラー    | event=db\_connect\_error    |
@@ -88,6 +88,7 @@ DB処理
 | AP-9905 | タイムアウト     | event=timeout\_error        |
 | AP-9999 | 想定外例外      | event=unexpected\_exception |
 
+```
 実務だと最終的にこういう形式になることが多いです。
 Plain Text
 2026-10-07 09:00:01.123
@@ -95,7 +96,7 @@ level=INFO
 logId=AP-1001
 event=validation_start
 method=validateArgs
-``
+
 その他の行を表示する
 Plain Text
 2026-10-07 09:00:01.125
@@ -119,9 +120,10 @@ ELK/OpenSearch/Splunkで検索するため
 その他の行を表示する
 という二段構えにするのが、昔ながらの業務システムと現代的な構造化ログの折衷案としてかなり実践的です。
 この規約をそのまま Java の業務バッチで実装するなら、ログID + event + メタ情報を出す形がおすすめです。
+```
 
 例えば SLF4J を使う前提で設計します。
-LogConstants.java
+```LogConstants.java
 /**
  * ログID定義
  */
@@ -250,7 +252,9 @@ public class Main {
             args.length);
     }
 }
+```
 
+```
 出力例
 2026-10-07 09:00:01.123 INFO
 logId=AP-0001
@@ -295,6 +299,7 @@ event=process_end
 class=Main
 method=main
 elapsedMs=7
+```
 
 この形だと、
 運用担当は AP-1001 で設計書を引ける
@@ -312,6 +317,3 @@ method=validateArgs
 ログ検索基盤上で直接検索できます。 
 そのため運用性を考えると
 ログIDと構造化ログの併用が良いと考えました。
-
-ログメッセージには、曜日とか祝日とかいれる？
-

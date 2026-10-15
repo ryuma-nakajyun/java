@@ -9,6 +9,12 @@ import java.time.format.DateTimeFormatter;
  */
 public final class Logger {
 
+        /**
+         * コンストラクタ
+         */
+        private Logger() {
+        }
+
         // ログメッセージ日時フォーマット
         private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
 
@@ -27,12 +33,6 @@ public final class Logger {
 
         // ERROR
         private static final String ERROR = "ERROR";
-
-        /**
-         * コンストラクタ
-         */
-        private Logger() {
-        }
 
         /**
          * DEBUGログ出力メソッド

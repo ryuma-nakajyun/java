@@ -68,7 +68,6 @@ public class Main {
             String fileName) throws IOException {
 
         String methodName = Thread.currentThread().getStackTrace()[METHOD_NUM].getMethodName();
-        // Logger.info(TRACE_ID, "AP-0001", CLASS_NAME, methodName, "処理開始");
 
         // 引数チェック
         // 引数がnull または 空のチェック
@@ -109,8 +108,6 @@ public class Main {
                 prefList.add(createPref(prefCols));
             }
 
-            // Logger.info(TRACE_ID, "AP-0005", CLASS_NAME, methodName, "処理終了");
-
             return prefList;
         }
     }
@@ -131,7 +128,6 @@ public class Main {
             List<Pref> prefList) throws IllegalArgumentException {
 
         String methodName = Thread.currentThread().getStackTrace()[METHOD_NUM].getMethodName();
-        // Logger.info(TRACE_ID, "AP-0001", CLASS_NAME, methodName, "処理開始");
 
         // 引数チェック
         if (prefList.isEmpty()) {
@@ -143,17 +139,17 @@ public class Main {
         int debugCount = 1;
         Logger.debug(TRACE_ID, "AP-xxxx", CLASS_NAME, methodName, "都道府県情報出力開始");
         for (Pref pref : prefList) {
-            Logger.debug(TRACE_ID, "AP-xxxx", CLASS_NAME, methodName, "カウント:" + debugCount  + "回目");
-            Logger.debug(TRACE_ID, "AP-xxxx", CLASS_NAME, methodName, "都道府県コード:" + String.format("%02d", Integer.parseInt(pref.getPrefCode())));
+            Logger.debug(TRACE_ID, "AP-xxxx", CLASS_NAME, methodName, "カウント:" + debugCount + "回目");
+            Logger.debug(TRACE_ID, "AP-xxxx", CLASS_NAME, methodName,
+                    "都道府県コード:" + String.format("%02d", Integer.parseInt(pref.getPrefCode())));
             Logger.debug(TRACE_ID, "AP-xxxx", CLASS_NAME, methodName, "都道府県名:" + pref.getPrefName());
             Logger.debug(TRACE_ID, "AP-xxxx", CLASS_NAME, methodName, "市区名:" + pref.getCityName());
-            Logger.debug(TRACE_ID, "AP-xxxx", CLASS_NAME, methodName, "緯度[10進数]:" +  dmsToDecimal(pref.getLatitude()));
+            Logger.debug(TRACE_ID, "AP-xxxx", CLASS_NAME, methodName, "緯度[10進数]:" + dmsToDecimal(pref.getLatitude()));
             Logger.debug(TRACE_ID, "AP-xxxx", CLASS_NAME, methodName, "経度[10進数]:" + dmsToDecimal(pref.getLongitude()));
             debugCount++;
         }
         Logger.debug(TRACE_ID, "AP-xxxx", CLASS_NAME, methodName, "都道府県情報出力終了");
-        
-    // Logger.info(TRACE_ID, "AP-0005", CLASS_NAME, methodName, "処理終了");
+
     }
 
     /**
@@ -169,10 +165,9 @@ public class Main {
      * @return pref
      */
     private static Pref createPref(
-        String[] cols) {
+            String[] cols) {
 
         String methodName = Thread.currentThread().getStackTrace()[METHOD_NUM].getMethodName();
-        // Logger.info(TRACE_ID, "AP-0001", CLASS_NAME, methodName, "処理開始");
 
         // TODO: インデックスよりも連想配列もいいね。
         // →AI回答→あまりこの場合はあまりよろしくないらしい。
@@ -183,22 +178,36 @@ public class Main {
         pref.setLatitude(cols[CsvConst.LATITUDE]);// 緯度（北緯）[60進数]
         pref.setLongitude(cols[CsvConst.LONGITUDE]);// 経度（東経）[60進数]
 
-        // Logger.info(TRACE_ID, "AP-0005", CLASS_NAME, methodName, "処理終了");
-
         return pref;
     }
 
     /**
      * dmsToDecimalメソッド
-     * 60進数の座標を10進数に変換する
-     * @param dms 座標
-     * @return degree
+     * DMS形式(度分秒)を10進数へ変換する
+     *
+     * @param dms DMS文字列（例: 34°23′15″）
+     * @return 10進数
+     * @throws IllegalArgumentException 引数不正の場合
      */
     private static double dmsToDecimal(
-        String dms) {
+            String dms)
+            throws IllegalArgumentException {
 
         String methodName = Thread.currentThread().getStackTrace()[METHOD_NUM].getMethodName();
-        // Logger.info(TRACE_ID, "AP-0001", CLASS_NAME, methodName, "処理開始");
+        Logger.info(TRACE_ID, "AP-1000", CLASS_NAME, methodName, "DMS変換開始 dms=" + dms);
+
+        // 引数チェック
+        if (dms == null || dms.isEmpty()) {
+            Logger.warn(TRACE_ID, "AP-1001", CLASS_NAME, methodName, "引数チェックNG dms=" + dms);
+            throw new IllegalArgumentException("引数チェックNG dms=" + dms);
+        }
+        // 文字列チェックを実行
+        // // DMS形式チェック
+        // if (!dms.matches("\\d+°\\d+′\\d+″")) {
+        // Logger.warn(TRACE_ID, "AP-1002", CLASS_NAME,methodName, "DMS形式不正 dms=" +
+        // dms);
+        // throw new IllegalArgumentException("DMS形式不正 dms=" + dms);
+        // }
 
         String[] parts = dms
                 .replace("°", " ")
@@ -207,16 +216,35 @@ public class Main {
                 .trim()
                 .split("\\s+");
 
-        // 文字列が含まれているかチェックが必要かね
+        if (parts.length != 3) {
+            Logger.warn(TRACE_ID, "AP-1003", CLASS_NAME, methodName, "DMS分解結果不正 length=" + parts.length);
+            throw new IllegalArgumentException("DMS分解結果不正 length=" + parts.length);
+        }
+
         int degree = Integer.parseInt(parts[0]);
         int minute = Integer.parseInt(parts[1]);
         int second = Integer.parseInt(parts[2]);
 
-            // Logger.info(TRACE_ID, "AP-0005", CLASS_NAME, methodName, "処理終了");
+        Logger.debug(TRACE_ID, "AP-1004", CLASS_NAME, methodName,
+                String.format("DMS分解結果 degree=%d minute=%d second=%d", degree, minute, second));
+
+        // 分・秒範囲チェック
+        // 分
+        if (minute < 0 || minute > 59) {
+            Logger.warn(TRACE_ID, "AP-1005", CLASS_NAME, methodName, "分が範囲外 minute=" + minute);
+            throw new IllegalArgumentException("分が範囲外 minute=" + minute);
+        }
+        // 秒
+        if (second < 0 || second > 59) {
+            Logger.warn(TRACE_ID, "AP-1006", CLASS_NAME, methodName, "秒が範囲外 second=" + second);
+            throw new IllegalArgumentException("秒が範囲外 second=" + second);
+        }
 
         double ret = degree
                 + (double) minute / 60
                 + (double) second / 3600;
+
+        Logger.info(TRACE_ID, "AP-1007", CLASS_NAME, methodName, "DMS変換終了 result=" + ret);
 
         return ret;
     }
