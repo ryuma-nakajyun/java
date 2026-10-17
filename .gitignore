@@ -1,26 +1,54 @@
-# Java
+# ===== Java =====
 *.class
 
-# Build directories
+# ===== Build directories =====
 target/
 build/
 out/
+bin/
 
-# IntelliJ IDEA
+# ===== IntelliJ IDEA =====
 .idea/
 *.iml
 
-# Eclipse
+# ===== Eclipse =====
 .project
 .classpath
 .settings/
 
-# VS Code
+# ===== VS Code =====
 .vscode/
+*.code-workspace
 
-# Log
+# ===== Maven =====
+.mvn/wrapper/maven-wrapper.jar
+
+# ===== Gradle =====
+.gradle/
+
+# ===== Logs =====
+logs/
+log/
 *.log
 
-# OS files
+# ===== OS files =====
 .DS_Store
 Thumbs.db
+
+# ===== Temporary files =====
+*.tmp
+*.swp
+*.swo
+*.bak
+
+# ===== Secrets / Keys =====
+*.pem
+*.key
+*.crt
+*.p12
+*.der
+
+# ===== Coverage / Test =====
+coverage/
+*.exec
+jacoco.exec

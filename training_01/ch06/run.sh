@@ -12,7 +12,7 @@ fi
 echo "[INFO] Compile successful."
 
 # 実行
-java -cp bin Main /home/ryuma/dev/java/training_01/ch06/data/pref.csv
+java -cp bin Main /home/ryuma/dev/java/training_01/ch07/data/pref.csv
 
 # 直前の実行結果の判定
 if [ $? -ne 0 ]; then

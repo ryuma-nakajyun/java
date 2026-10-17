@@ -7,6 +7,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author R.Nakajyun
@@ -23,6 +25,22 @@ public class Main {
 
     // 現在のメソッド
     private static final int METHOD_NUM = 1; // TODO:AIより、これは廃止にすべき。理由はまだ追えていない
+
+    // CSVファイルカラム区切り記号
+    private static final String SEPARATOR = ",";
+
+    // 60進数での最小値と最大値
+    // 秒の最小値
+    private static final int MIN_SECOND = 0;
+
+    // 秒の最大値
+    private static final int MAX_SECOND = 59;
+
+    // 分の最小値
+    private static final int MIN_MINUTE = 0;
+    
+    // 分の最大値
+    private static final int MAX_MINUTE = 59;
 
     /**
      * mainメソッド
@@ -99,12 +117,11 @@ public class Main {
 
                 // -1 で末尾の空欄も保持
                 // カラム数のチェック
-                String[] prefCols = csvRecord.split(",", -1);
+                String[] prefCols = csvRecord.split(SEPARATOR, -1);
                 if (prefCols.length != CsvConst.COLUMN_COUNT) {
                     Logger.warn(TRACE_ID, "AP-1001", CLASS_NAME, methodName, "CSVフォーマット不正:csvRecord=" + csvRecord);
                     throw new IOException("CSVフォーマット不正:csvRecord=" + csvRecord);
                 }
-
                 prefList.add(createPref(prefCols));
             }
 
@@ -132,23 +149,21 @@ public class Main {
         // 引数チェック
         if (prefList.isEmpty()) {
             Logger.warn(TRACE_ID, "AP-1001", CLASS_NAME, methodName, "引数チェックNG prefList.size=" + prefList.size());
-            throw new IllegalArgumentException("データが0件です。prefList.size=" + prefList.size());
-            // TODO:場合によりけり、データが0件の場合でも処理継続も有かも。 なにが0件なのか？
+            throw new IllegalArgumentException("データが0件です。prefList.size=" + prefList.size());  // TODO:場合によりけり、データが0件の場合でも処理継続も有かも。 なにが0件なのか？
         }
 
         int debugCount = 1;
         Logger.debug(TRACE_ID, "AP-xxxx", CLASS_NAME, methodName, "都道府県情報出力開始");
         for (Pref pref : prefList) {
-            Logger.debug(TRACE_ID, "AP-xxxx", CLASS_NAME, methodName, "カウント:" + debugCount + "回目");
-            Logger.debug(TRACE_ID, "AP-xxxx", CLASS_NAME, methodName,
-                    "都道府県コード:" + String.format("%02d", Integer.parseInt(pref.getPrefCode())));
+            Logger.debug(TRACE_ID, "AP-xxxx", CLASS_NAME, methodName, "カウント:[" + debugCount + "]回目");
+            Logger.debug(TRACE_ID, "AP-xxxx", CLASS_NAME, methodName, "都道府県コード:" + String.format("%02d", Integer.parseInt(pref.getPrefCode())));
             Logger.debug(TRACE_ID, "AP-xxxx", CLASS_NAME, methodName, "都道府県名:" + pref.getPrefName());
             Logger.debug(TRACE_ID, "AP-xxxx", CLASS_NAME, methodName, "市区名:" + pref.getCityName());
             Logger.debug(TRACE_ID, "AP-xxxx", CLASS_NAME, methodName, "緯度[10進数]:" + dmsToDecimal(pref.getLatitude()));
             Logger.debug(TRACE_ID, "AP-xxxx", CLASS_NAME, methodName, "経度[10進数]:" + dmsToDecimal(pref.getLongitude()));
             debugCount++;
         }
-        Logger.debug(TRACE_ID, "AP-xxxx", CLASS_NAME, methodName, "都道府県情報出力終了");
+        Logger.debug(TRACE_ID, "AP-xxxx", CLASS_NAME, methodName, "都道府県情報出力終了総件数:[" + debugCount + "]件");
 
     }
 
@@ -201,14 +216,16 @@ public class Main {
             Logger.warn(TRACE_ID, "AP-1001", CLASS_NAME, methodName, "引数チェックNG dms=" + dms);
             throw new IllegalArgumentException("引数チェックNG dms=" + dms);
         }
-        // 文字列チェックを実行
-        // // DMS形式チェック
-        // if (!dms.matches("\\d+°\\d+′\\d+″")) {
-        // Logger.warn(TRACE_ID, "AP-1002", CLASS_NAME,methodName, "DMS形式不正 dms=" +
-        // dms);
-        // throw new IllegalArgumentException("DMS形式不正 dms=" + dms);
-        // }
 
+        // 前後の空白を除去
+        dms = dms.trim();
+        // DMS形式チェック
+        Pattern pattern = Pattern.compile("(\\d+)°(\\d+)′(\\d+)″");
+        Matcher matcher = pattern.matcher(dms);
+        if (!matcher.matches()) {
+            Logger.warn(TRACE_ID, "AP-1002", CLASS_NAME, methodName, "DMS形式不正 dms=" + dms);
+            throw new IllegalArgumentException("DMS形式不正 dms=" + dms);
+        }
         String[] parts = dms
                 .replace("°", " ")
                 .replace("′", " ")
@@ -230,12 +247,12 @@ public class Main {
 
         // 分・秒範囲チェック
         // 分
-        if (minute < 0 || minute > 59) {
+        if (minute < MIN_MINUTE  || minute > MAX_MINUTE ) {
             Logger.warn(TRACE_ID, "AP-1005", CLASS_NAME, methodName, "分が範囲外 minute=" + minute);
             throw new IllegalArgumentException("分が範囲外 minute=" + minute);
         }
         // 秒
-        if (second < 0 || second > 59) {
+        if (second < MIN_SECOND || second > MAX_SECOND) {
             Logger.warn(TRACE_ID, "AP-1006", CLASS_NAME, methodName, "秒が範囲外 second=" + second);
             throw new IllegalArgumentException("秒が範囲外 second=" + second);
         }
